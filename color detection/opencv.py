@@ -11,19 +11,19 @@ while(1):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # define color in HSV
-    lower_blue = np.array([100,150,0])
-    upper_blue = np.array([140,255,255])
+    lower_blue = np.array([101,157,0])
+    upper_blue = np.array([111,255,255])
 
-    lower_red = np.array([136,87,111])
+    lower_red = np.array([133,142,0])
     upper_red = np.array([180,255,255])
 
-    lower_yellow = np.array([20,100,100])
-    upper_yellow = np.array([30,255,255])
+    lower_green = np.array([40,176,0])
+    upper_green = np.array([80,255,255])
 
     # Threshold the HSV image to get only specific colors
     red = cv2.inRange(hsv, lower_red, upper_red)
     blue = cv2.inRange(hsv, lower_blue, upper_blue)
-    yellow = cv2.inRange(hsv, lower_yellow, upper_yellow)
+    green = cv2.inRange(hsv, lower_green, upper_green)
     
     # Bitwise-AND mask and original image
     kernal= np.ones((5 ,5), "uint8") #kernal is created of 5x5
@@ -33,9 +33,9 @@ while(1):
     blue=cv2.dilate(blue,kernal)
 
     res1=cv2.bitwise_and(frame, frame, mask = blue)
-    yellow=cv2.dilate(yellow,kernal)
+    green=cv2.dilate(green,kernal)
     
-    res2=cv2.bitwise_and(frame, frame, mask = yellow)
+    res2=cv2.bitwise_and(frame, frame, mask = green)
 
     contours,hierarchy = cv2.findContours(red,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     for pic, contour in enumerate(contours):
@@ -45,13 +45,13 @@ while(1):
             frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255),2)
             cv2.putText(frame,"RED color",(x,y),cv2.FONT_HERSHEY_SIMPLEX, 0.7,(0,0,255))
 
-    contours,hierarchy = cv2.findContours(yellow,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    contours,hierarchy = cv2.findContours(green,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     for pic, contour in enumerate(contours):
         area = cv2.contourArea(contour)
         if(area>300): #for removing small noises
             x,y,w,h = cv2.boundingRect(contour)
-            frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(30,255,255),2)
-            cv2.putText(frame,"YELLOW color",(x,y),cv2.FONT_HERSHEY_SIMPLEX, 0.7,(30,255,255))
+            frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
+            cv2.putText(frame,"GREEN color",(x,y),cv2.FONT_HERSHEY_SIMPLEX, 0.7,(0,255,0))
 
     contours,hierarchy = cv2.findContours(blue,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     for pic, contour in enumerate(contours):
